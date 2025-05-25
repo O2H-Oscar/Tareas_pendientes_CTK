@@ -1,1 +1,1 @@
-hover_color="RoyalBlue2"
+corner_radius
