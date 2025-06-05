@@ -1,11 +1,14 @@
-import tkinter as tk            # Importar tkinter para crear la GUI
-import customtkinter as ctk     # Importar customtkinter para una apariencia más moderna
-from tkinter import ttk         # Importa el submódulo de ttk para una apariencia mejorada de los widgets
-import os                       # Importar os para manejar rutas de archivos
-import sys                      # Importar sys para manejar el sistema y rutas de archivos
+import tkinter as tk                   # Importar tkinter para crear la GUI
+import customtkinter as ctk            # Importar customtkinter para una apariencia más moderna
+from tkinter import ttk, messagebox    # Importa el submódulo de ttk para una apariencia mejorada de los widgets y messajebox para mostrar ventanas de alerta
+import os                              # Importar os para manejar rutas de archivos
+import sys                             # Importar sys para manejar el sistema y rutas de archivos
+import textwrap                        # Módulo que permite personalizar un texto largo en líneas más cortas
+from datetime import datetime,date     # Importa las clases datetime y date para trabajar con fechas
+from PIL import Image,ImageTk          # Importa los módulos Image e ImageTk para trabajar con imagenes
 
 
-
+imagenes = []         # Lista global para mantener las referencias de las imágenes
 
 # Funciones
 
@@ -47,6 +50,68 @@ def leyenda(canvas):
 
         canvas.create_rectangle(x,y,x+tamanno,y+tamanno,fill=color)
         canvas.create_text(x+25,tamanno + 5,text=texto, anchor='w', font=('Arial',9))
+
+
+def estado(fecha):
+
+    fecha_actual = date.today()
+
+    fecha = datetime.strptime(fecha,"%d-%m-%Y").date()
+
+    # Calcular diferencia de días
+
+    diferencia_dias = (fecha - fecha_actual).days        # Nos devuelve la diferencia en días entre las dos fechas, para conseguirlo utiliza la clase timedelta de datetime y el atributo days para quedarnos solo con los días
+                                                                                    
+    if diferencia_dias > 3:                                             # Bloque else - if para definir cada una de los estados
+        imagen_estado = Image.open(resource_path("azul.png"))
+        return imagen_estado
+    
+    elif 1 <= diferencia_dias <= 3:
+        imagen_estado = Image.open(resource_path("amarillo.png"))      # Esto devuelve un objeto tipo Image
+        return imagen_estado
+    
+    else:
+        imagen_estado = Image.open(resource_path("rojo.png"))
+        return imagen_estado
+
+    
+    
+   
+
+
+
+def guardar_nota():
+    fecha = entrada_fecha.get().strip()
+    texto = entrada_texto.get("1.0","end").strip()
+
+    if fecha and texto:
+        texto_dividido = "\n".join(textwrap.wrap(texto,width=45))
+        imagen_estado = estado(fecha)
+
+        imagen_estado = imagen_estado.resize((30,30), Image.Resampling.LANCZOS)
+        imagen_tk = ImageTk.PhotoImage(imagen_estado)
+
+        tree.insert("",0,image=imagen_tk,values=(texto_dividido,fecha))
+
+        # Guardar la referencia de la imagen
+        imagenes.append(imagen_tk)                       #Este código garantiza que las imágenes (imagen_Tk) no se recolecten como basura mientras el programa esté en ejecución
+
+        # Limpia los campos después de guardar
+        entrada_texto.delete("1.0","end")
+        entrada_fecha.delete(0,"end")
+
+    else:
+        messagebox.showinfo("Alerta","Tanto la fecha como la tarea pendiente son obligatorias. ")
+
+
+ # Función que limita la cantidad de caracteres de la tarea pendiente
+def limitar_caracteres(event):
+    texto_actual = entrada_texto.get("1.0","end")
+    if len(texto_actual) > 100:
+        texto_permitido = texto_actual[:100]
+        entrada_texto.delete("1.0","end")
+        entrada_texto.insert("1.0",text=texto_permitido)
+
 
 
 
@@ -117,7 +182,7 @@ optionmenu.pack(side='right',padx=(0,50),pady=(30,10))
 
 # Botones 
 
-boton_guardar=ctk.CTkButton(frame_interior,text="💾  Guardar",fg_color="DodgerBlue3",width=85,hover_color="RoyalBlue2") # Crear el botón Guardar, al hacer clic en el se ejecutará la función guardar_nota
+boton_guardar=ctk.CTkButton(frame_interior,text="💾  Guardar",fg_color="DodgerBlue3",width=85,hover_color="RoyalBlue2",command=guardar_nota) # Crear el botón Guardar, al hacer clic en el se ejecutará la función guardar_nota
 boton_guardar.pack(side="left",padx=(80,0),pady=(30,10))                          # Empaquetar el botón a la izquierda con un margen de 80 píxeles a la derecha y 30 píxeles arriba y 10 píxeles abajo
 
 
@@ -166,7 +231,9 @@ tree.pack(fill="both",expand=True,pady=(0,20))
 
 leyenda(canvas)
 
+  # Eventos
 
+entrada_texto.bind("<KeyRelease>",limitar_caracteres)
 
 
 
