@@ -1,30 +1,10 @@
 [
     {
-        "texto": "Hacer la compra",
-        "fecha": "19-03-2025"
+        "texto": "Hacer la compra.",
+        "fecha": "24-06-2025"
     },
     {
-        "texto": "Hacer ejercicios",
-        "fecha": "15-03-2025"
-    },
-    {
-        "texto": "Entiendo, estás utilizando `customtkinter`.\nAunque `customtkinter` proporciona más\nopciones de personalización que `tkinter`,\ncambiar el color de la barra de título de la\nventana sigue siendo una limi",
-        "fecha": "18-03-2025"
-    },
-    {
-        "texto": "El Canvas puede responder a eventos como\nclics del mouse y teclas, lo que te permite\ncrear aplicaciones interactivas.",
-        "fecha": "17-03-2025"
-    },
-    {
-        "texto": "Ir al Centro Comercial",
-        "fecha": "16-03-2025"
-    },
-    {
-        "texto": "fwfefwf",
-        "fecha": "07-04-2025"
-    },
-    {
-        "texto": "fefeqwfqf",
-        "fecha": "10-11-2025"
+        "texto": "Impartir clases de Python.",
+        "fecha": "29-06-2025"
     }
 ]

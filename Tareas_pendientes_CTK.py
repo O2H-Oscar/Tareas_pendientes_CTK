@@ -6,6 +6,7 @@ import sys                             # Importar sys para manejar el sistema y 
 import textwrap                        # Módulo que permite personalizar un texto largo en líneas más cortas
 from datetime import datetime,date     # Importa las clases datetime y date para trabajar con fechas
 from PIL import Image,ImageTk          # Importa los módulos Image e ImageTk para trabajar con imagenes
+import json                            # Importa el módulo json que nos permite trabajar con archivos .json
 
 
 imagenes = []         # Lista global para mantener las referencias de las imágenes
@@ -96,12 +97,39 @@ def guardar_nota():
         # Guardar la referencia de la imagen
         imagenes.append(imagen_tk)                       #Este código garantiza que las imágenes (imagen_Tk) no se recolecten como basura mientras el programa esté en ejecución
 
+
+        guardar_tareas_json(texto,fecha)
+
         # Limpia los campos después de guardar
         entrada_texto.delete("1.0","end")
         entrada_fecha.delete(0,"end")
 
     else:
         messagebox.showinfo("Alerta","Tanto la fecha como la tarea pendiente son obligatorias. ")
+
+
+def guardar_tareas_json (texto,fecha):
+    archivo = 'tareas.json'
+
+    if os.path.exists(archivo) and os.stat(archivo).st_size > 0:
+        with open(archivo,'r', encoding='utf-8') as archivo_abierto:
+            tareas = json.load(archivo_abierto)
+
+    else:
+        tareas = []  
+
+
+    nueva_tarea = {"texto":texto, "fecha":fecha}
+    tareas.append(nueva_tarea)
+
+    with open(archivo,'w', encoding='utf-8') as archivo_abierto_w:
+        json.dump(tareas,archivo_abierto_w,indent=4,ensure_ascii=False)
+
+
+       
+
+
+
 
 
  # Función que limita la cantidad de caracteres de la tarea pendiente
