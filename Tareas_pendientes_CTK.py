@@ -127,6 +127,40 @@ def guardar_tareas_json (texto,fecha):
 
 
        
+def cargar_datos_json():
+    # Ruta al archivo JSON
+    ruta_archivo = os.path.join(os.getcwd(),"tareas.json")
+
+    # Si el archivo existe que cargue los datos
+
+    if os.path.exists(ruta_archivo):
+        if os.stat(ruta_archivo).st_size == 0:
+            messagebox.showinfo("Información","No hay tareas pendientes")
+
+
+
+        else:
+            with open(ruta_archivo,'r',encoding='utf-8') as archivo_abierto:
+                datos = json.load(archivo_abierto)
+
+
+            for elemento in datos:
+                fecha = elemento['fecha']
+                imagen_estado = estado(fecha)
+                if imagen_estado:
+                    imagen_estado = imagen_estado.resize((30,30), Image.Resampling.LANCZOS)
+                    imagen_tk = ImageTk.PhotoImage(imagen_estado)
+                    texto_dividido = "\n".join(textwrap.wrap(elemento['texto'],width=45))
+                    tree.insert("",0,image=imagen_tk,values=(texto_dividido,fecha))
+
+                     # Guardar la referencia de la imagen
+                    imagenes.append(imagen_tk)                       #Este código garantiza que las imágenes (imagen_Tk) no se recolecten como basura mientras el programa esté en ejecución
+
+
+                    
+
+                    
+
 
 
 
@@ -258,6 +292,7 @@ tree.pack(fill="both",expand=True,pady=(0,20))
 # Llamada de funciones
 
 leyenda(canvas)
+cargar_datos_json()
 
   # Eventos
 
