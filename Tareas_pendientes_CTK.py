@@ -176,7 +176,7 @@ def ordenar(valor):
     ordenar_fechas = []
 
 
-    if valor == 'Fechas':
+    if valor == 'Fecha':
         ID = tree.get_children()
         
         for elemento in ID:
