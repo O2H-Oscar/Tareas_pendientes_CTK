@@ -202,7 +202,7 @@ def ordenar(valor):
         for item in tree.get_children():
             tree.delete(item)
 
-            cargar_datos_json()
+        cargar_datos_json()
 
 
 
