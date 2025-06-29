@@ -10,6 +10,10 @@ import json                            # Importa el módulo json que nos permite
 
 
 imagenes = []         # Lista global para mantener las referencias de las imágenes
+ordenar_fechas = []
+
+
+
 
 # Funciones
 
@@ -157,14 +161,7 @@ def cargar_datos_json():
                     imagenes.append(imagen_tk)                       #Este código garantiza que las imágenes (imagen_Tk) no se recolecten como basura mientras el programa esté en ejecución
 
 
-                    
-
-                    
-
-
-
-
-
+                               
 
  # Función que limita la cantidad de caracteres de la tarea pendiente
 def limitar_caracteres(event):
@@ -173,6 +170,46 @@ def limitar_caracteres(event):
         texto_permitido = texto_actual[:100]
         entrada_texto.delete("1.0","end")
         entrada_texto.insert("1.0",text=texto_permitido)
+
+def ordenar(valor):
+    global ordenar_fechas
+    ordenar_fechas = []
+
+
+    if valor == 'Fechas':
+        ID = tree.get_children()
+        
+        for elemento in ID:
+            ordenar_fechas.append(tree.item(elemento,"values"))
+        ordenar_fechas.sort(key=lambda x: datetime.strptime(x[1],"%d-%m-%Y"),reverse=True)
+
+        for item in tree.get_children():
+            tree.delete(item)
+
+        for tupla in ordenar_fechas:
+            imagen_estado = estado(tupla[1])
+
+            if imagen_estado:
+                imagen_estado = imagen_estado.resize((30,30),Image.Resampling.LANCZOS)
+                imagen_Tk = ImageTk.PhotoImage(imagen_estado)
+                tree.insert("",0,image=imagen_Tk,values=(tupla[0],tupla[1]))                               
+
+                # Guardar la referncia de la imagen
+                imagenes.append(imagen_Tk)
+
+
+    elif valor == "Creación":
+        for item in tree.get_children():
+            tree.delete(item)
+
+            cargar_datos_json()
+
+
+
+
+
+
+
 
 
 
@@ -225,7 +262,8 @@ menu_opcines_var = ctk.StringVar(value="Ordenar por...")  # Crear una variable d
 
 
 optionmenu = ctk.CTkOptionMenu(frame_interior, 
-                              values=["Fecha","Creación"],
+                                values=["Fecha","Creación"],
+                                command= ordenar,
                                 variable=menu_opcines_var ,
                                 width=90,
                                 fg_color='DodgerBlue3',
