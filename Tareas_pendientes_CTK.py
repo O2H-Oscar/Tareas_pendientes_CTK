@@ -205,6 +205,38 @@ def ordenar(valor):
         cargar_datos_json()
 
 
+def editar_nota(event):
+    region = tree.identify_region(event.x,event.y)
+
+    if region != "cell":
+        # Si no es una celda (por ejemplo, si es heading), no hacer nada
+        return
+    
+    fila_id = tree.identify_row(event.y)
+    columna_id = tree.identify_column(event.x)
+
+    if columna_id == "#1":
+        contenido_tarea = tree.set(fila_id,columna_id)
+        contenido_fecha = tree.set(fila_id,"#2")
+        entrada_texto.delete("1.0","end")
+        entrada_fecha.delete("0","end")
+        entrada_texto.insert("1.0",contenido_tarea)
+        entrada_fecha.insert("0",contenido_fecha)
+
+        tree.delete(fila_id)
+        # eliminar_tarea_json(contenido_texto,contenido_fecha)
+
+    elif columna_id == "#2":
+        contenido_fecha = tree.set(fila_id,columna_id)
+        contenido_tarea = tree.set(fila_id,"#1")
+        entrada_texto.delete("1.0","end")
+        entrada_fecha.delete("0","end")
+        entrada_texto.insert("1.0",contenido_tarea)
+        entrada_fecha.insert("0",contenido_fecha)
+
+        tree.delete(fila_id)
+        # eliminar_tarea_json(contenido_texto,contenido_fecha)
+
 
 
 
@@ -335,6 +367,9 @@ cargar_datos_json()
   # Eventos
 
 entrada_texto.bind("<KeyRelease>",limitar_caracteres)
+
+tree.bind("<Double-1>",editar_nota)
+
 
 
 
