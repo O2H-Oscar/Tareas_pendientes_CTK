@@ -66,9 +66,9 @@ def estado(fecha):
     # Calcular diferencia de días
 
     diferencia_dias = (fecha - fecha_actual).days        # Nos devuelve la diferencia en días entre las dos fechas, para conseguirlo utiliza la clase timedelta de datetime y el atributo days para quedarnos solo con los días
-                                                                                    
-    if diferencia_dias > 3:                                             # Bloque else - if para definir cada una de los estados
-        imagen_estado = Image.open(resource_path("azul.png"))
+    # Bloque else - if para definir cada uno de los estado                                                                               
+    if diferencia_dias > 3:                                                          
+        imagen_estado = Image.open(resource_path("azul.png"))    
         return imagen_estado
     
     elif 1 <= diferencia_dias <= 3:
@@ -86,6 +86,7 @@ def estado(fecha):
 
 
 def guardar_nota():
+    global imagenes
     fecha = entrada_fecha.get().strip()
     texto = entrada_texto.get("1.0","end").strip()
 
@@ -132,6 +133,7 @@ def guardar_tareas_json (texto,fecha):
 
        
 def cargar_datos_json():
+    global imagenes
     # Ruta al archivo JSON
     ruta_archivo = os.path.join(os.getcwd(),"tareas.json")
 
@@ -140,6 +142,7 @@ def cargar_datos_json():
     if os.path.exists(ruta_archivo):
         if os.stat(ruta_archivo).st_size == 0:
             messagebox.showinfo("Información","No hay tareas pendientes")
+            return
 
 
 
@@ -150,6 +153,7 @@ def cargar_datos_json():
 
             for elemento in datos:
                 fecha = elemento['fecha']
+                
                 imagen_estado = estado(fecha)
                 if imagen_estado:
                     imagen_estado = imagen_estado.resize((30,30), Image.Resampling.LANCZOS)
@@ -238,10 +242,15 @@ def editar_nota(event):
         # eliminar_tarea_json(contenido_texto,contenido_fecha)
 
 
+# Esta función muestra el Menú:  Eliminar tarea
+def mostrar_menu(event):
+    menu.post(event.x_root,event.y_root)
 
 
-
-
+def eliminar_tarea():
+    item_seleccionados = tree.selection()
+    for elemento in item_seleccionados:
+        tree.delete(elemento)
 
 
 
@@ -350,7 +359,9 @@ tree.column("FECHA",width=20,anchor="center")
 # Ubicación Treeview
 tree.pack(fill="both",expand=True,pady=(0,20))
                       
-
+# Menú emergente para eliminar la tareas pendientes
+menu = tk.Menu(tearoff=0)
+menu.add_command(label="Eliminar tarea",command=eliminar_tarea)
 
 
 
@@ -369,6 +380,8 @@ cargar_datos_json()
 entrada_texto.bind("<KeyRelease>",limitar_caracteres)
 
 tree.bind("<Double-1>",editar_nota)
+
+tree.bind("<Button-3>",mostrar_menu)
 
 
 
