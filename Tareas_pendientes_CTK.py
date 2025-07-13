@@ -228,7 +228,7 @@ def editar_nota(event):
         entrada_fecha.insert("0",contenido_fecha)
 
         tree.delete(fila_id)
-        # eliminar_tarea_json(contenido_texto,contenido_fecha)
+        eliminar_tarea_json(contenido_tarea,contenido_fecha)
 
     elif columna_id == "#2":
         contenido_fecha = tree.set(fila_id,columna_id)
@@ -239,21 +239,42 @@ def editar_nota(event):
         entrada_fecha.insert("0",contenido_fecha)
 
         tree.delete(fila_id)
-        # eliminar_tarea_json(contenido_texto,contenido_fecha)
+        eliminar_tarea_json(contenido_tarea,contenido_fecha)
 
 
 # Esta función muestra el Menú:  Eliminar tarea
 def mostrar_menu(event):
     menu.post(event.x_root,event.y_root)
 
-
+# Esta función elimina las tareas seleccionadas en el treeview
 def eliminar_tarea():
     item_seleccionados = tree.selection()
     for elemento in item_seleccionados:
+        eliminar_tarea_json(tree.item(elemento,"values")[0],tree.item(elemento,"values")[1])
         tree.delete(elemento)
+        
+        
 
 
 
+def eliminar_tarea_json(texto,fecha):
+    archivo = "Tareas.json"
+    tareas_filtradas = []
+
+    if os.path.exists(archivo) and os.stat(archivo).st_size > 0:
+        with open(archivo,'r',encoding='utf-8') as archivo_abierto:
+            tareas = json.load(archivo_abierto)
+     
+
+        for tarea in tareas:
+            texto_formateado = "\n".join(textwrap.wrap(tarea['texto'],width=45))
+            if not (texto_formateado == texto and tarea['fecha'] == fecha):
+                tareas_filtradas.append(tarea)
+
+        tareas = tareas_filtradas
+
+        with open(archivo,'w',encoding='utf-8') as archivo_escribir:
+            json.dump(tareas,archivo_escribir,indent=4,ensure_ascii=False)
 
 
 
