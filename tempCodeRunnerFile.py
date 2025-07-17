@@ -1,1 +1,1 @@
-corner_radius
+if fecha and texto:

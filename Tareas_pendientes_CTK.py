@@ -277,6 +277,17 @@ def eliminar_tarea_json(texto,fecha):
             json.dump(tareas,archivo_escribir,indent=4,ensure_ascii=False)
 
 
+def al_cerrar():
+    valor_entrada = entrada_texto.get("1.0","end").strip()
+    if len(valor_entrada) > 0:                        #length = longitud
+        if messagebox.askokcancel("Salir","¿Quiere usted salir sin guardar los cambios?"):        # Ok    Cancelar
+            root.destroy()
+            
+    else:
+        root.destroy()       
+
+
+
 
 # Ventana principal
 
@@ -404,7 +415,7 @@ tree.bind("<Double-1>",editar_nota)
 
 tree.bind("<Button-3>",mostrar_menu)
 
-
+root.protocol("WM_DELETE_WINDOW",al_cerrar)
 
 
 root.mainloop()
